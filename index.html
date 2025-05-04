@@ -1,0 +1,3406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment PDF Editor</title>
+    <!-- Add Google Fonts for handwriting -->
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Dancing+Script&family=Caveat&family=Satisfy&family=Indie+Flower&family=Shadows+Into+Light&family=Homemade+Apple&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --danger-color: #EA4335;
+            --dark-color: #202124;
+            --light-color: #F8F9FA;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Font definitions - Import all the original project fonts */
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('fonts/font4.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'AnotherFont';
+            src: url('fonts/font5.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font3';
+            src: url('fonts/font3.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font4';
+            src: url('fonts/fontx.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font5';
+            src: url('fonts/fonty.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font6';
+            src: url('fonts/font6.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font7';
+            src: url('fonts/font7.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font8';
+            src: url('fonts/font8.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'font9';
+            src: url('fonts/font9.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .sidebar {
+            flex: 0 0 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .pdf-container {
+            flex: 1;
+            min-width: 500px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .pdf-page {
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn-upload {
+            background-color: var(--primary-color);
+        }
+        
+        .btn-add {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-image {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-download {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-page {
+            background-color: var(--dark-color);
+        }
+        
+        .btn-compress {
+            background-color: var(--secondary-color);
+        }
+        
+        .compression-options {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .compression-options.visible {
+            display: block;
+        }
+        
+        .compression-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .compression-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .file-size-indicator {
+            margin-top: 5px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: var(--font-main);
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .font-selector {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: var(--font-main);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .handwritten-text {
+            position: absolute;
+            cursor: move;
+            padding: 5px;
+            font-family: 'CustomFont', cursive;
+            border: 1px dashed transparent;
+            user-select: none;
+            line-height: 1.5;
+            word-spacing: 2px;
+            letter-spacing: 0.5px;
+            background-color: transparent !important;
+        }
+        
+        .handwritten-text:hover {
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .draggable-image {
+            position: absolute;
+            cursor: move;
+            max-width: none;
+            max-height: none;
+            border: 1px dashed transparent;
+            user-select: none;
+            overflow: visible;
+        }
+        
+        .draggable-image:hover {
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .draggable-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .image-drag-handle {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 24px;
+            background-color: rgba(66, 133, 244, 0.9);
+            border-radius: 4px;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .draggable-image:hover .image-drag-handle {
+            opacity: 1;
+        }
+        
+        .image-drag-handle:hover {
+            background-color: rgba(66, 133, 244, 1);
+        }
+        
+        .image-drag-handle:active {
+            background-color: rgba(59, 120, 231, 1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .draggable-image.dragging {
+            opacity: 0.8;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .image-resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
+            border: 2px solid #4285F4;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        
+        /* Corner handles */
+        .resize-handle-se {
+            bottom: -6px;
+            right: -6px;
+            cursor: nwse-resize;
+        }
+        
+        .resize-handle-sw {
+            bottom: -6px;
+            left: -6px;
+            cursor: nesw-resize;
+        }
+        
+        .resize-handle-ne {
+            top: -6px;
+            right: -6px;
+            cursor: nesw-resize;
+        }
+        
+        .resize-handle-nw {
+            top: -6px;
+            left: -6px;
+            cursor: nwse-resize;
+        }
+        
+        /* Side handles */
+        .resize-handle-n {
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: ns-resize;
+        }
+        
+        .resize-handle-e {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: ew-resize;
+        }
+        
+        .resize-handle-s {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: ns-resize;
+        }
+        
+        .resize-handle-w {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: ew-resize;
+        }
+        
+        .draggable-image.resizing {
+            border: 1px dashed #4285F4;
+            opacity: 0.9;
+        }
+        
+        .page-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .current-page {
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .slider-container input[type="range"] {
+            width: 100%;
+        }
+        
+        .slider-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: 500;
+        }
+        
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 5px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: none;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+        
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        .color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        
+        .color-picker::-moz-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        
+        .color-picker:hover {
+            transform: scale(1.1);
+            border-color: #999;
+        }
+        
+        .color-picker-label {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 20px;
+            line-height: 30px;
+            color: #666;
+        }
+        
+        .error-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #b71c1c;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .success-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #1b5e20;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .status-container {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: 1 0 100%;
+                margin-right: 0;
+            }
+            
+            .pdf-container {
+                flex: 1 0 100%;
+                min-width: auto;
+            }
+        }
+        
+        /* Add real-time editor styles */
+        .real-time-editor {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .editor-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            resize: vertical;
+            min-height: 100px;
+            font-family: var(--font-main);
+        }
+        
+        .editor-output {
+            width: 100%;
+            min-height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        /* Additional setting controls */
+        .setting-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .setting-control {
+            flex: 1 0 45%;
+        }
+        
+        .setting-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .setting-slider {
+            width: 100%;
+        }
+        
+        /* Color palette for text */
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: inline-block;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+            border-color: #999;
+        }
+        
+        .color-option.selected {
+            border-color: #333;
+            transform: scale(1.1);
+        }
+        
+        /* Color palette container */
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        /* Text formatting controls */
+        .formatting-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .format-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .format-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .format-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        #format-bold {
+            font-weight: bold;
+        }
+        
+        #format-italic {
+            font-style: italic;
+        }
+        
+        #format-underline {
+            text-decoration: underline;
+        }
+        
+        /* Text formatting classes for handwritten text */
+        .handwritten-bold {
+            font-weight: bold;
+        }
+        
+        .handwritten-italic {
+            font-style: italic;
+        }
+        
+        .handwritten-underline {
+            text-decoration: underline;
+        }
+        
+        /* Advanced options section */
+        .advanced-options {
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+        
+        .advanced-toggle {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 5px 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .advanced-toggle:after {
+            content: "▼";
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .advanced-toggle.collapsed:after {
+            content: "►";
+        }
+        
+        .advanced-content {
+            display: none;
+            padding: 10px 0;
+        }
+        
+        .advanced-content.visible {
+            display: block;
+        }
+        
+        /* Background styling options */
+        .bg-option {
+            margin-bottom: 10px;
+        }
+        
+        .bg-color-preview {
+            height: 20px;
+            border-radius: 4px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Visual effects options */
+        .effect-option {
+            margin-bottom: 10px;
+        }
+        
+        .effect-checkbox {
+            margin-right: 5px;
+        }
+        
+        /* Paper line effect */
+        .paper-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background-image: linear-gradient(#b9b9b9 1px, transparent 1px);
+            background-size: 100% 25px;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        
+        /* Scanned effect */
+        .scanned-effect {
+            filter: grayscale(20%) contrast(120%) brightness(95%);
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.05) 0px,
+                rgba(0,0,0,0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            text-shadow: 0.2px 0.2px 0.3px rgba(0,0,0,0.3);
+        }
+        
+        /* Shadow effect */
+        .shadow-effect {
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        /* Applied to the page container */
+        .scanned-effect-container {
+            position: relative;
+        }
+        
+        .scanned-effect-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background-image: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.03) 0px,
+                rgba(0,0,0,0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 10;
+            filter: contrast(150%) brightness(105%);
+            mix-blend-mode: multiply;
+        }
+        
+        .shadow-effect-container {
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Active effect indicator in sidebar */
+        .effect-active {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .effect-active::after {
+            content: " ✓";
+            color: var(--secondary-color);
+        }
+        
+        /* Visual indicator overlay */
+        .effect-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            padding: 5px 8px;
+            font-size: 12px;
+            color: var(--dark-color);
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .effect-indicator span {
+            margin-right: 5px;
+            font-weight: bold;
+        }
+        
+        /* Tab for switching between text and drawing */
+        .editor-tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .editor-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            border: 1px solid #ddd;
+        }
+        
+        .editor-tab.active {
+            background-color: white;
+            border-bottom-color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Reset and undo buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .action-btn svg {
+            margin-right: 5px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .action-btn.delete-btn {
+            color: #d32f2f;
+        }
+        
+        .action-btn.undo-btn {
+            color: #1976d2;
+        }
+        
+        /* Element controls that appear on hover */
+        .element-controls {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 2px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .handwritten-text:hover .element-controls,
+        .draggable-image:hover .element-controls {
+            opacity: 1;
+        }
+        
+        .element-control-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 2px;
+            color: #333;
+        }
+        
+        .element-control-btn:hover {
+            color: #d32f2f;
+        }
+        
+        .rich-editor {
+            width: 100%;
+            padding: 10px;
+            min-height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            font-family: var(--font-main);
+            font-size: 16px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+        
+        .rich-editor:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 3px rgba(66, 133, 244, 0.3);
+        }
+        
+        .rich-editor:empty:before {
+            content: attr(placeholder);
+            color: #aaa;
+            pointer-events: none;
+        }
+        
+        /* Improve list formatting */
+        .handwritten-text ul, 
+        .handwritten-text ol,
+        .rich-editor ul,
+        .rich-editor ol {
+            padding-left: 25px;
+            margin: 10px 0;
+        }
+        
+        .handwritten-text li,
+        .rich-editor li {
+            margin-bottom: 5px;
+        }
+        
+        /* Improve numbered lists */
+        .handwritten-text ol,
+        .rich-editor ol {
+            list-style-type: decimal;
+        }
+        
+        .handwritten-text ol ol,
+        .rich-editor ol ol {
+            list-style-type: lower-alpha;
+        }
+        
+        .handwritten-text ol ol ol,
+        .rich-editor ol ol ol {
+            list-style-type: lower-roman;
+        }
+        
+        /* Improve bullet points */
+        .handwritten-text ul,
+        .rich-editor ul {
+            list-style-type: disc;
+        }
+        
+        .handwritten-text ul ul,
+        .rich-editor ul ul {
+            list-style-type: circle;
+        }
+        
+        .handwritten-text ul ul ul,
+        .rich-editor ul ul ul {
+            list-style-type: square;
+        }
+        
+        /* Make sure pasted content preserves whitespace properly */
+        .handwritten-text p,
+        .rich-editor p {
+            margin: 0 0 10px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Handwritten Assignment Editor</h1>
+        <p>Upload your PDF assignment, add realistic handwritten text, and place images anywhere on the page</p>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="control-group">
+                <h2 class="section-title">PDF Upload</h2>
+                <input type="file" id="pdf-file" accept=".pdf" style="display: none;">
+                <button class="btn btn-upload" onclick="document.getElementById('pdf-file').click()">Choose PDF File</button>
+                <div class="status-container" id="pdf-status"></div>
+            </div>
+            
+            <div class="control-group">
+                <h2 class="section-title">Add Text</h2>
+                
+                <div class="editor-tabs">
+                    <div class="editor-tab active" data-tab="text">Text</div>
+                    <div class="editor-tab" data-tab="draw">Drawing</div>
+                </div>
+                
+                <div class="tab-content active" id="text-tab">
+                    <div class="input-group">
+                        <label for="font-family">Handwriting Style:</label>
+                        <select id="font-family" class="font-selector">
+                            <option value="'CustomFont', cursive">Original Handwriting 1</option>
+                            <option value="'AnotherFont', cursive">Original Handwriting 2</option>
+                            <option value="'font3', cursive">Original Handwriting 3</option>
+                            <option value="'font4', cursive">Original Handwriting 4</option>
+                            <option value="'font5', cursive">Original Handwriting 5</option>
+                            <option value="'font6', cursive">Original Handwriting 6</option>
+                            <option value="'font7', cursive">Original Handwriting 7</option>
+                            <option value="'font8', cursive">Original Handwriting 8</option>
+                            <option value="'font9', cursive">Original Handwriting 9</option>
+                            <option value="'Cedarville Cursive', cursive">Cedarville Cursive</option>
+                            <option value="'Dancing Script', cursive">Dancing Script</option>
+                            <option value="'Caveat', cursive">Caveat</option>
+                            <option value="'Satisfy', cursive">Satisfy</option>
+                            <option value="'Homemade Apple', cursive">Homemade Apple</option>
+                            <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-controls">
+                        <div class="setting-control">
+                            <label class="setting-label" for="font-size">Font Size: <span id="font-size-value">16</span>px</label>
+                            <input type="range" id="font-size" class="setting-slider" min="10" max="30" value="16" step="1">
+                        </div>
+                        
+                        <div class="setting-control">
+                            <label class="setting-label" for="line-spacing">Line Spacing: <span id="line-spacing-value">1.5</span></label>
+                            <input type="range" id="line-spacing" class="setting-slider" min="1" max="3" value="1.5" step="0.1">
+                        </div>
+                        
+                        <div class="setting-control">
+                            <label class="setting-label" for="letter-spacing">Letter Spacing: <span id="letter-spacing-value">0.5</span>px</label>
+                            <input type="range" id="letter-spacing" class="setting-slider" min="0" max="3" value="0.5" step="0.1">
+                        </div>
+                        
+                        <div class="setting-control">
+                            <label class="setting-label" for="word-spacing">Word Spacing: <span id="word-spacing-value">2</span>px</label>
+                            <input type="range" id="word-spacing" class="setting-slider" min="0" max="10" value="2" step="0.5">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Text Color:</label>
+                        <div class="color-palette">
+                            <!-- Black pen -->
+                            <div class="color-option selected" style="background-color: #000000" data-color="#000000" title="Black Pen"></div>
+                            
+                            <!-- Blue pen options -->
+                            <div class="color-option" style="background-color: #0047AB" data-color="#0047AB" title="Blue Pen"></div>
+                            <div class="color-option" style="background-color: #00008B" data-color="#00008B" title="Dark Blue Pen"></div>
+                            <div class="color-option" style="background-color: #000066" data-color="#000066" title="Navy Blue Pen"></div>
+                            
+                            <!-- Red pen options -->
+                            <div class="color-option" style="background-color: #8B0000" data-color="#8B0000" title="Dark Red Pen"></div>
+                            <div class="color-option" style="background-color: #B22222" data-color="#B22222" title="Red Pen"></div>
+                            
+                            <!-- Green pen options -->
+                            <div class="color-option" style="background-color: #006400" data-color="#006400" title="Dark Green Pen"></div>
+                            <div class="color-option" style="background-color: #228B22" data-color="#228B22" title="Forest Green Pen"></div>
+                            
+                            <!-- Purple pen option -->
+                            <div class="color-option" style="background-color: #4B0082" data-color="#4B0082" title="Purple Pen"></div>
+                            
+                            <!-- Custom color option -->
+                            <input type="color" id="text-color" class="color-picker" value="#000000">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Text Formatting:</label>
+                        <div class="formatting-controls">
+                            <button id="format-bold" class="format-btn" title="Bold (select text first)">B</button>
+                            <button id="format-italic" class="format-btn" title="Italic (select text first)">I</button>
+                            <button id="format-underline" class="format-btn" title="Underline (select text first)">U</button>
+                        </div>
+                    </div>
+                    
+                    <div class="real-time-editor">
+                        <div id="editor-input" class="rich-editor" contenteditable="true" placeholder="Start typing here... Select text to format it with bold, italic, or underline."></div>
+                        
+                        <div class="action-buttons">
+                            <button class="action-btn undo-btn" id="undo-text" title="Undo Last Change">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 10h10a4 4 0 1 1 0 8H9"></path>
+                                    <path d="M7 6L3 10l4 4"></path>
+                                </svg>
+                                Undo
+                            </button>
+                            <button class="action-btn delete-btn" id="delete-text" title="Delete Current Text">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="advanced-options">
+                        <button class="advanced-toggle collapsed">Advanced Options</button>
+                        <div class="advanced-content" style="display: none;">
+                            <div class="effect-option">
+                                <input type="checkbox" id="paper-lines-effect" class="effect-checkbox">
+                                <label for="paper-lines-effect">Show Paper Lines</label>
+                            </div>
+                            
+                            <div class="effect-option">
+                                <input type="checkbox" id="scanned-effect" class="effect-checkbox">
+                                <label for="scanned-effect">Scanned Paper Effect</label>
+                            </div>
+                            
+                            <div class="effect-option">
+                                <input type="checkbox" id="shadow-effect" class="effect-checkbox">
+                                <label for="shadow-effect">Paper Shadow Effect</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="draw-tab">
+                    <div class="drawing-tools">
+                        <p>Drawing functionality will be implemented in a future update.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h2 class="section-title">Add Image</h2>
+                <button class="btn btn-image" onclick="uploadImage()">Add Image to Page</button>
+                <button class="btn btn-image" id="undo-image" style="background-color: var(--accent-color); margin-left: 10px;">Undo Last Image Action</button>
+            </div>
+            
+            <div class="control-group">
+                <h2 class="section-title">Download</h2>
+                <button class="btn btn-download" onclick="downloadPDF()">Download Completed PDF</button>
+                <button class="btn btn-compress" onclick="toggleCompressionOptions()">Compress PDF</button>
+                
+                <div id="compression-options" class="compression-options">
+                    <div class="compression-info">
+                        <span>Quality: <span id="quality-value">80%</span></span>
+                        <span>Estimated Size: <span id="estimated-size">Unknown</span></span>
+                    </div>
+                    <input type="range" id="compression-quality" class="compression-slider" min="10" max="100" value="80">
+                    <div class="file-size-indicator" id="file-size-info">Target size: Less than 3MB</div>
+                    <button class="btn btn-download" onclick="downloadCompressedPDF()">Download Compressed PDF</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pdf-container">
+            <div class="page-controls" id="page-controls" style="display: none;">
+                <button class="btn btn-page" onclick="prevPage()">Previous Page</button>
+                <span class="current-page" id="current-page">Page 1 of 1</span>
+                <button class="btn btn-page" onclick="nextPage()">Next Page</button>
+            </div>
+            
+            <div id="pdf-preview"></div>
+            
+            <div class="error-container" id="error-container"></div>
+            <div class="success-container" id="success-container"></div>
+        </div>
+    </div>
+    
+    <div class="loader" id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text">Processing your PDF, please wait...</div>
+    </div>
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfjs-dist/3.4.120/pdf.min.js"></script>
+    <script src="https://unpkg.com/image-quality@latest/dist/image-quality.min.js"></script>
+    
+    <script>
+        // Initialize PDF.js
+        window.pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        
+        // Global variables
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.5;
+        let pdfPreview = document.getElementById('pdf-preview');
+        let pageCount = 0;
+        
+        // Global variables for text history
+        let textHistory = [];
+        let currentText = '';
+        let textElements = {}; // Store text elements per page
+        
+        // Global variables for image history
+        let imageHistory = [];
+        let imageElements = {}; // Store image elements per page
+        
+        // Initialize all sliders
+        document.getElementById('font-size').addEventListener('input', function() {
+            document.getElementById('font-size-value').textContent = this.value;
+            updateHandwritingPreview();
+        });
+        
+        document.getElementById('line-spacing').addEventListener('input', function() {
+            document.getElementById('line-spacing-value').textContent = this.value;
+            updateHandwritingPreview();
+        });
+        
+        document.getElementById('letter-spacing').addEventListener('input', function() {
+            document.getElementById('letter-spacing-value').textContent = this.value;
+            updateHandwritingPreview();
+        });
+        
+        document.getElementById('word-spacing').addEventListener('input', function() {
+            document.getElementById('word-spacing-value').textContent = this.value;
+            updateHandwritingPreview();
+        });
+        
+        document.getElementById('text-color').addEventListener('input', function() {
+            updateHandwritingPreview();
+        });
+        
+        document.getElementById('font-family').addEventListener('change', function() {
+            updateHandwritingPreview();
+        });
+        
+        // Initialize text formatting buttons for selective formatting
+        document.getElementById('format-bold').addEventListener('click', function() {
+            document.execCommand('bold', false, null);
+            document.getElementById('editor-input').focus();
+            
+            // Save state to history
+            const editorInput = document.getElementById('editor-input');
+            textHistory.push(currentText);
+            currentText = editorInput.innerHTML;
+            
+            updateHandwritingOnPage();
+        });
+        
+        document.getElementById('format-italic').addEventListener('click', function() {
+            document.execCommand('italic', false, null);
+            document.getElementById('editor-input').focus();
+            
+            // Save state to history
+            const editorInput = document.getElementById('editor-input');
+            textHistory.push(currentText);
+            currentText = editorInput.innerHTML;
+            
+            updateHandwritingOnPage();
+        });
+        
+        document.getElementById('format-underline').addEventListener('click', function() {
+            document.execCommand('underline', false, null);
+            document.getElementById('editor-input').focus();
+            
+            // Save state to history
+            const editorInput = document.getElementById('editor-input');
+            textHistory.push(currentText);
+            currentText = editorInput.innerHTML;
+            
+            updateHandwritingOnPage();
+        });
+        
+        // Initialize undo and delete buttons
+        document.getElementById('undo-text').addEventListener('click', undoText);
+        document.getElementById('delete-text').addEventListener('click', deleteText);
+        
+        // Updated editor input event listener to track history and render live preview
+        const editorInput = document.getElementById('editor-input');
+        
+        // Add placeholder behavior for contenteditable div
+        editorInput.addEventListener('focus', function() {
+            if (this.textContent.trim() === '') {
+                this.textContent = '';
+            }
+        });
+        
+        editorInput.addEventListener('blur', function() {
+            if (this.textContent.trim() === '') {
+                this.innerHTML = '';
+            }
+        });
+        
+        // Improved handling for paste events
+        editorInput.addEventListener('paste', function(e) {
+            // Prevent the default paste
+            e.preventDefault();
+            
+            // Get the clipboard data as plain text and HTML
+            let text = '';
+            let html = '';
+            
+            if (e.clipboardData) {
+                text = e.clipboardData.getData('text/plain');
+                html = e.clipboardData.getData('text/html');
+            } else if (window.clipboardData) {
+                text = window.clipboardData.getData('Text');
+            }
+            
+            // Process the content
+            if (html && html.trim() !== '') {
+                // Clean the HTML to remove unwanted styles while preserving structure
+                const cleanHtml = cleanPastedHTML(html);
+                document.execCommand('insertHTML', false, cleanHtml);
+            } else if (text) {
+                // Process plain text
+                // Convert numbered lists (1. 2. 3.) to proper HTML lists
+                const processedText = processPlainTextLists(text);
+                
+                if (processedText !== text) {
+                    // If text was processed as a list, insert as HTML
+                    document.execCommand('insertHTML', false, processedText);
+                } else {
+                    // Otherwise insert as plain text
+                    document.execCommand('insertText', false, text);
+                }
+            }
+            
+            // Save state to history
+            textHistory.push(currentText);
+            currentText = this.innerHTML;
+            
+            // Update on page
+            updateHandwritingOnPage();
+        });
+        
+        // Function to clean pasted HTML content
+        function cleanPastedHTML(html) {
+            // Create a temporary div to work with the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Remove script tags
+            const scripts = tempDiv.querySelectorAll('script');
+            scripts.forEach(script => script.remove());
+            
+            // Remove style tags
+            const styles = tempDiv.querySelectorAll('style');
+            styles.forEach(style => style.remove());
+            
+            // Clean list elements and make sure they're properly formatted
+            const lists = tempDiv.querySelectorAll('ul, ol');
+            lists.forEach(list => {
+                list.style = '';
+                const items = list.querySelectorAll('li');
+                items.forEach(item => {
+                    item.style = '';
+                });
+            });
+            
+            // Preserve paragraphs, line breaks, and basic text structure
+            const paragraphs = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
+            paragraphs.forEach(p => {
+                // Keep only essential text formatting
+                const isBold = window.getComputedStyle(p).fontWeight > 500;
+                const isItalic = window.getComputedStyle(p).fontStyle === 'italic';
+                const isUnderlined = window.getComputedStyle(p).textDecoration.includes('underline');
+                
+                // Clear all styles while preserving content
+                const innerHTML = p.innerHTML;
+                let newInnerHTML = innerHTML;
+                
+                // Re-apply essential formatting
+                if (isBold) newInnerHTML = `<strong>${newInnerHTML}</strong>`;
+                if (isItalic) newInnerHTML = `<em>${newInnerHTML}</em>`;
+                if (isUnderlined) newInnerHTML = `<u>${newInnerHTML}</u>`;
+                
+                p.innerHTML = newInnerHTML;
+                p.removeAttribute('style');
+                p.removeAttribute('class');
+            });
+            
+            return tempDiv.innerHTML;
+        }
+        
+        // Function to detect and process plain text lists
+        function processPlainTextLists(text) {
+            // Check for numbered list patterns (1. 2. 3.)
+            const numberedListPattern = /^\s*(\d+)\.+\s+(.+)$/gm;
+            
+            // Check for bullet point patterns (• - * )
+            const bulletListPattern = /^\s*[\•\-\*]\s+(.+)$/gm;
+            
+            // Test if the text contains numbered lists
+            const hasNumberedList = text.match(numberedListPattern);
+            const hasBulletList = text.match(bulletListPattern);
+            
+            if (hasNumberedList) {
+                let inList = false;
+                let listHtml = '';
+                const lines = text.split('\n');
+                
+                lines.forEach(line => {
+                    const match = line.match(/^\s*(\d+)\.+\s+(.+)$/);
+                    
+                    if (match) {
+                        if (!inList) {
+                            listHtml += '<ol>';
+                            inList = true;
+                        }
+                        listHtml += `<li>${match[2]}</li>`;
+                    } else if (line.trim() !== '') {
+                        if (inList) {
+                            listHtml += '</ol>';
+                            inList = false;
+                        }
+                        listHtml += `<p>${line}</p>`;
+                    } else if (line.trim() === '') {
+                        if (inList) {
+                            listHtml += '</ol>';
+                            inList = false;
+                        }
+                        listHtml += '<p><br></p>';
+                    }
+                });
+                
+                if (inList) {
+                    listHtml += '</ol>';
+                }
+                
+                return listHtml;
+            } else if (hasBulletList) {
+                let inList = false;
+                let listHtml = '';
+                const lines = text.split('\n');
+                
+                lines.forEach(line => {
+                    const match = line.match(/^\s*[\•\-\*]\s+(.+)$/);
+                    
+                    if (match) {
+                        if (!inList) {
+                            listHtml += '<ul>';
+                            inList = true;
+                        }
+                        listHtml += `<li>${match[1]}</li>`;
+                    } else if (line.trim() !== '') {
+                        if (inList) {
+                            listHtml += '</ul>';
+                            inList = false;
+                        }
+                        listHtml += `<p>${line}</p>`;
+                    } else if (line.trim() === '') {
+                        if (inList) {
+                            listHtml += '</ul>';
+                            inList = false;
+                        }
+                        listHtml += '<p><br></p>';
+                    }
+                });
+                
+                if (inList) {
+                    listHtml += '</ul>';
+                }
+                
+                return listHtml;
+            }
+            
+            // If no list patterns detected, return the original text
+            return text;
+        }
+        
+        editorInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            
+            // Save current HTML content before updating
+            if (this.innerHTML !== currentText) {
+                textHistory.push(currentText);
+                currentText = this.innerHTML;
+                
+                // Limit history size to prevent memory issues
+                if (textHistory.length > 50) {
+                    textHistory.shift();
+                }
+            }
+            
+            debounceTimer = setTimeout(updateHandwritingOnPage, 100);
+        });
+        
+        // Show error message
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.textContent = message;
+            errorContainer.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                errorContainer.style.display = 'none';
+            }, 5000);
+            
+            console.error(message);
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            const successContainer = document.getElementById('success-container');
+            successContainer.textContent = message;
+            successContainer.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                successContainer.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Show/hide loader
+        function toggleLoader(show) {
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
+        }
+        
+        // Update PDF status
+        function updatePdfStatus(message) {
+            document.getElementById('pdf-status').textContent = message;
+        }
+        
+        // Load PDF file
+        document.getElementById('pdf-file').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.type !== 'application/pdf') {
+                showError('Please select a valid PDF file.');
+                return;
+            }
+            
+            toggleLoader(true);
+            updatePdfStatus('Loading PDF...');
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const typedarray = new Uint8Array(e.target.result);
+                
+                // Load PDF document
+                pdfjsLib.getDocument({data: typedarray}).promise
+                    .then(function(pdf) {
+                        pdfDoc = pdf;
+                        pageCount = pdf.numPages;
+                        updatePdfStatus(`PDF loaded successfully (${pageCount} pages)`);
+                        
+                        // Update page display
+                        document.getElementById('current-page').textContent = `Page ${pageNum} of ${pageCount}`;
+                        document.getElementById('page-controls').style.display = pageCount > 1 ? 'flex' : 'none';
+                        
+                        // Initialize text elements storage for all pages
+                        textElements = {};
+                        for (let i = 1; i <= pageCount; i++) {
+                            textElements[i] = null;
+                        }
+                        
+                        // Render first page
+                        renderPage(pageNum);
+                        showSuccess('PDF uploaded successfully!');
+                    })
+                    .catch(function(error) {
+                        showError('Error loading PDF: ' + error.message);
+                        updatePdfStatus('Failed to load PDF');
+                    })
+                    .finally(function() {
+                        toggleLoader(false);
+                    });
+            };
+            
+            reader.onerror = function() {
+                showError('Error reading the PDF file');
+                updatePdfStatus('Failed to read file');
+                toggleLoader(false);
+            };
+            
+            reader.readAsArrayBuffer(file);
+        });
+        
+        // Render a specific page
+        function renderPage(num) {
+            pageRendering = true;
+            
+            // Clear previous content
+            pdfPreview.innerHTML = '';
+            updatePdfStatus(`Rendering page ${num}...`);
+            
+            pdfDoc.getPage(num).then(function(page) {
+                // Create viewport at desired scale
+                const viewport = page.getViewport({scale: scale});
+                
+                // Create page container
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'pdf-page';
+                pageDiv.id = `page-${num}`;
+                pageDiv.style.width = `${viewport.width}px`;
+                pageDiv.style.height = `${viewport.height}px`;
+                pdfPreview.appendChild(pageDiv);
+                
+                // Create canvas for PDF content
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                pageDiv.appendChild(canvas);
+                
+                // Render PDF page on canvas
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
+                const renderTask = page.render(renderContext);
+                
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    updatePdfStatus(`Page ${num} displayed`);
+                    
+                    // Check if another page needs rendering
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                        return; // Exit early since we'll render another page
+                    }
+                    
+                    // Restore text element if it exists for this page
+                    let textElem = null;
+                    if (textElements[num]) {
+                        textElem = textElements[num].cloneNode(true);
+                        pageDiv.appendChild(textElem);
+                        
+                        // Make the restored text element draggable
+                        const restoredText = pageDiv.querySelector('.handwritten-text');
+                        if (restoredText) {
+                            makeElementDraggable(restoredText, pageDiv);
+                        }
+                        
+                        // Update current text element 
+                        const editorElement = document.getElementById('editor-input');
+                        
+                        // Extract content without the controls
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = textElem.innerHTML;
+                        const controls = tempDiv.querySelector('.element-controls');
+                        if (controls) {
+                            controls.remove();
+                        }
+                        
+                        // Set the editor content
+                        editorElement.innerHTML = tempDiv.innerHTML;
+                        currentText = editorElement.innerHTML;
+                    } else {
+                        // Clear the text input if no text for this page
+                        document.getElementById('editor-input').innerHTML = '';
+                        currentText = '';
+                        
+                        // Force an update to ensure we create an empty text element if needed
+                        updateHandwritingOnPage();
+                    }
+                    
+                    // Restore images for this page if they exist
+                    if (imageElements[num] && imageElements[num].length > 0) {
+                        imageElements[num].forEach(imgTemplate => {
+                            // Create a new image container from the saved template
+                            const imgContainer = imgTemplate.cloneNode(true);
+                            
+                            // We need to reattach event handlers since cloneNode doesn't copy them
+                            // Fix delete button
+                            const deleteBtn = imgContainer.querySelector('.element-control-btn');
+                            if (deleteBtn) {
+                                // Remove old handler if any
+                                const newDeleteBtn = deleteBtn.cloneNode(true);
+                                deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+                                
+                                // Add new handler
+                                newDeleteBtn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    
+                                    // Save to history before removing
+                                    saveImageToHistory('delete', imgContainer);
+                                    
+                                    // Remove from DOM
+                                    imgContainer.remove();
+                                    
+                                    // Remove from imageElements storage
+                                    if (imageElements[num]) {
+                                        imageElements[num] = imageElements[num].filter(img => 
+                                            img !== imgContainer && 
+                                            img.querySelector('img').src !== imgContainer.querySelector('img').src
+                                        );
+                                    }
+                                    
+                                    showSuccess('Image removed');
+                                });
+                            }
+                            
+                            // Add to page
+                            pageDiv.appendChild(imgContainer);
+                            
+                            // Make the restored image draggable and resizable
+                            makeElementDraggable(imgContainer, pageDiv);
+                            makeImageResizableImproved(imgContainer);
+                        });
+                    }
+                    
+                    // Apply paper lines if the effect is enabled
+                    if (document.getElementById('paper-lines-effect').checked && !pageDiv.querySelector('.paper-lines')) {
+                        const paperLines = document.createElement('div');
+                        paperLines.className = 'paper-lines';
+                        pageDiv.appendChild(paperLines);
+                    }
+                    
+                    // Apply scanned effect to page if enabled
+                    if (document.getElementById('scanned-effect').checked) {
+                        pageDiv.classList.add('scanned-effect-container');
+                    }
+                    
+                    // Apply shadow effect to page if enabled
+                    if (document.getElementById('shadow-effect').checked) {
+                        pageDiv.classList.add('shadow-effect-container');
+                    }
+                    
+                    // Update effect indicators for this page
+                    updateEffectIndicators();
+                    
+                }).catch(function(error) {
+                    pageRendering = false;
+                    showError('Error rendering page: ' + error.message);
+                });
+            }).catch(function(error) {
+                showError('Error loading page: ' + error.message);
+            });
+            
+            // Update page counter
+            document.getElementById('current-page').textContent = `Page ${num} of ${pageCount}`;
+        }
+        
+        // Queue or immediately render a page
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+        
+        // Navigate to previous page
+        function prevPage() {
+            if (pageNum <= 1) return;
+            
+            // Save current text element
+            saveCurrentTextElement();
+            
+            // Save current images
+            saveCurrentImages();
+            
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+        
+        // Navigate to next page
+        function nextPage() {
+            if (pageNum >= pageCount) return;
+            
+            // Save current text element
+            saveCurrentTextElement();
+            
+            // Save current images
+            saveCurrentImages();
+            
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+        
+        // Save the current text element
+        function saveCurrentTextElement() {
+            const currentPageDiv = document.getElementById(`page-${pageNum}`);
+            const textElem = currentPageDiv.querySelector('.handwritten-text');
+            
+            if (textElem) {
+                // Store text element for current page
+                textElements[pageNum] = textElem;
+            }
+        }
+        
+        // Save all images on the current page
+        function saveCurrentImages() {
+            const currentPageDiv = document.getElementById(`page-${pageNum}`);
+            if (!currentPageDiv) return;
+            
+            const images = currentPageDiv.querySelectorAll('.draggable-image');
+            if (images.length > 0) {
+                // Initialize array for this page if it doesn't exist
+                if (!imageElements[pageNum]) {
+                    imageElements[pageNum] = [];
+                } else {
+                    // Clear the existing array for this page
+                    imageElements[pageNum] = [];
+                }
+                
+                // Store all image elements for the current page
+                images.forEach(img => {
+                    imageElements[pageNum].push(img.cloneNode(true));
+                });
+            }
+        }
+        
+        // Real-time handwriting conversion
+        let debounceTimer = null;
+        
+        // Update handwriting preview
+        function updateHandwritingPreview() {
+            const currentTextElement = getCurrentTextElement();
+            if (currentTextElement) {
+                // Update existing text element with current settings
+                applyHandwritingStyles(currentTextElement);
+            }
+        }
+        
+        // Apply handwriting styles to an element
+        function applyHandwritingStyles(element) {
+            const fontFamily = document.getElementById('font-family').value;
+            const fontSize = document.getElementById('font-size').value;
+            const lineSpacing = document.getElementById('line-spacing').value;
+            const letterSpacing = document.getElementById('letter-spacing').value;
+            const wordSpacing = document.getElementById('word-spacing').value;
+            const textColor = document.getElementById('text-color').value;
+            
+            element.style.fontFamily = fontFamily;
+            element.style.fontSize = `${fontSize}px`;
+            element.style.lineHeight = lineSpacing;
+            element.style.letterSpacing = `${letterSpacing}px`;
+            element.style.wordSpacing = `${wordSpacing}px`;
+            element.style.color = textColor;
+            
+            // We no longer apply global formatting as it's now done inline
+            // Instead, we preserve the inline formatting from the rich editor
+            
+            // Apply effects
+            if (document.getElementById('scanned-effect').checked) {
+                element.classList.add('scanned-effect');
+            } else {
+                element.classList.remove('scanned-effect');
+            }
+            
+            if (document.getElementById('shadow-effect').checked) {
+                element.classList.add('shadow-effect');
+            } else {
+                element.classList.remove('shadow-effect');
+            }
+        }
+        
+        // Get current text element on the page
+        function getCurrentTextElement() {
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            if (!pageDiv) return null;
+            
+            return pageDiv.querySelector('.handwritten-text');
+        }
+        
+        // Update handwriting on the page
+        function updateHandwritingOnPage() {
+            if (!pdfDoc) {
+                showError('Please upload a PDF first');
+                return;
+            }
+            
+            const editorHtml = document.getElementById('editor-input').innerHTML;
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            
+            if (!pageDiv) {
+                showError('Page container not found');
+                return;
+            }
+            
+            // Get or create text element for this page
+            let textElement = getCurrentTextElement();
+            
+            // If text element doesn't exist yet, create it
+            if (!textElement) {
+                textElement = document.createElement('div');
+                textElement.className = 'handwritten-text';
+                
+                // Position at the top-left of the page with some margin
+                textElement.style.left = '40px';
+                textElement.style.top = '40px';
+                textElement.style.width = 'calc(100% - 80px)';
+                
+                // Create element controls
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'element-controls';
+                
+                // Add delete button to controls
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'element-control-btn';
+                deleteBtn.innerHTML = '❌';
+                deleteBtn.title = 'Delete Text';
+                deleteBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    // Don't actually remove the element, just clear the text
+                    textElement.innerHTML = '';
+                    document.getElementById('editor-input').innerHTML = '';
+                    currentText = '';
+                    
+                    // Store the empty text element
+                    textElements[pageNum] = textElement;
+                    
+                    // Add this to history
+                    textHistory.push(currentText);
+                    
+                    showSuccess('Text removed');
+                };
+                
+                // Add controls to container
+                controlsDiv.appendChild(deleteBtn);
+                textElement.appendChild(controlsDiv);
+                
+                pageDiv.appendChild(textElement);
+                
+                // Make the text element draggable
+                makeElementDraggable(textElement, pageDiv);
+                
+                // Store the text element reference
+                textElements[pageNum] = textElement;
+                
+                // Add paper lines if the effect is enabled
+                if (document.getElementById('paper-lines-effect').checked && !pageDiv.querySelector('.paper-lines')) {
+                    const paperLines = document.createElement('div');
+                    paperLines.className = 'paper-lines';
+                    pageDiv.appendChild(paperLines);
+                }
+                
+                // Apply scanned effect to page if enabled
+                if (document.getElementById('scanned-effect').checked) {
+                    pageDiv.classList.add('scanned-effect-container');
+                }
+                
+                // Apply shadow effect to page if enabled
+                if (document.getElementById('shadow-effect').checked) {
+                    pageDiv.classList.add('shadow-effect-container');
+                }
+            }
+            
+            // Update text content with HTML formatting preserved
+            // First remove any existing control elements that might be in the innerHTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = editorHtml;
+            const controls = tempDiv.querySelector('.element-controls');
+            if (controls) {
+                controls.remove();
+            }
+            
+            // Now set the content
+            // First, get the content without controls
+            const textOnly = tempDiv.innerHTML;
+            
+            // Clear the text element content while preserving the controls
+            const existingControls = textElement.querySelector('.element-controls');
+            textElement.innerHTML = '';
+            
+            // Add the text content
+            textElement.insertAdjacentHTML('beforeend', textOnly);
+            
+            // Re-add the controls if needed
+            if (existingControls) {
+                textElement.appendChild(existingControls);
+            } else if (!textElement.querySelector('.element-controls')) {
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'element-controls';
+                
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'element-control-btn';
+                deleteBtn.innerHTML = '❌';
+                deleteBtn.title = 'Delete Text';
+                deleteBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    textElement.innerHTML = '';
+                    document.getElementById('editor-input').innerHTML = '';
+                    currentText = '';
+                    textElements[pageNum] = textElement; // Keep reference but with empty content
+                    textHistory.push(''); // Add to history
+                    showSuccess('Text removed');
+                };
+                
+                controlsDiv.appendChild(deleteBtn);
+                textElement.appendChild(controlsDiv);
+            }
+            
+            // Save the updated text element to our storage
+            textElements[pageNum] = textElement.cloneNode(true);
+            
+            // Apply handwriting styles (color, font, etc.) but not formatting (bold, italic, underline)
+            applyHandwritingStyles(textElement);
+        }
+        
+        // Undo text function
+        function undoText() {
+            if (textHistory.length > 0) {
+                const previousHtml = textHistory.pop();
+                const editorInput = document.getElementById('editor-input');
+                
+                // Update current text and editor
+                currentText = previousHtml;
+                editorInput.innerHTML = previousHtml;
+                
+                // Update the handwriting on the page
+                updateHandwritingOnPage();
+                
+                showSuccess('Text reverted to previous state');
+            } else {
+                showError('No more history to undo');
+            }
+        }
+        
+        // Delete text function
+        function deleteText() {
+            // Save current text to history before deleting
+            if (currentText.trim() !== '') {
+                textHistory.push(currentText);
+            }
+            
+            // Clear the text
+            currentText = '';
+            document.getElementById('editor-input').innerHTML = '';
+            
+            // Update the handwriting on the page
+            updateHandwritingOnPage();
+            
+            showSuccess('Text deleted');
+        }
+        
+        // Upload and add image
+        function uploadImage() {
+            if (!pdfDoc) {
+                showError('Please upload a PDF first');
+                return;
+            }
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,.svg'; // Added SVG support
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']; // Added SVG mime type
+                if (!validTypes.includes(file.type)) {
+                    showError('Please select a valid image file (JPEG, PNG, GIF, or SVG)');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const pageDiv = document.getElementById(`page-${pageNum}`);
+                    if (!pageDiv) {
+                        showError('Page container not found');
+                        return;
+                    }
+                    
+                    // Create image container
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'draggable-image';
+                    imgContainer.style.left = '50px';
+                    imgContainer.style.top = '50px';
+                    imgContainer.style.width = '200px'; // Default width
+                    
+                    // Create the image element
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    
+                    // Create element controls
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.className = 'element-controls';
+                    
+                    // Add delete button to controls
+                    const deleteBtn = document.createElement('div');
+                    deleteBtn.className = 'element-control-btn';
+                    deleteBtn.innerHTML = '❌';
+                    deleteBtn.title = 'Delete Image';
+                    
+                    // Use a properly scoped event handler for delete
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        
+                        // Save to history before removing
+                        saveImageToHistory('delete', imgContainer);
+                        
+                        // Remove from DOM
+                        imgContainer.remove();
+                        
+                        // Remove from imageElements storage
+                        if (imageElements[pageNum]) {
+                            imageElements[pageNum] = imageElements[pageNum].filter(img => 
+                                img !== imgContainer && 
+                                img.querySelector('img').src !== imgContainer.querySelector('img').src
+                            );
+                        }
+                        
+                        showSuccess('Image removed');
+                    });
+                    
+                    // Add controls to container
+                    controlsDiv.appendChild(deleteBtn);
+                    
+                    // Add dedicated drag handle
+                    const dragHandle = document.createElement('div');
+                    dragHandle.className = 'image-drag-handle';
+                    dragHandle.innerHTML = '⇄';
+                    dragHandle.title = 'Drag to move image';
+                    
+                    // Add image, controls and drag handle to container
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(controlsDiv);
+                    imgContainer.appendChild(dragHandle);
+                    
+                    // Add resize handles
+                    const positions = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+                    positions.forEach(pos => {
+                        const handle = document.createElement('div');
+                        handle.className = `image-resize-handle resize-handle-${pos}`;
+                        imgContainer.appendChild(handle);
+                    });
+                    
+                    // Add to page
+                    pageDiv.appendChild(imgContainer);
+                    
+                    // Save to image history
+                    saveImageToHistory('add', imgContainer);
+                    
+                    // Make image draggable
+                    makeElementDraggable(imgContainer, pageDiv);
+                    
+                    // Make image resizable with improved function
+                    makeImageResizableImproved(imgContainer);
+                    
+                    // Store the image element reference for the current page
+                    if (!imageElements[pageNum]) {
+                        imageElements[pageNum] = [];
+                    }
+                    imageElements[pageNum].push(imgContainer.cloneNode(true));
+                    
+                    showSuccess('Image added successfully!');
+                };
+                
+                reader.onerror = function() {
+                    showError('Error reading the image file');
+                };
+                
+                reader.readAsDataURL(file);
+            };
+            
+            input.click();
+        }
+        
+        // Save image state to history
+        function saveImageToHistory(action, imageElement) {
+            const imageState = {
+                action: action,
+                pageNum: pageNum,
+                element: imageElement.cloneNode(true),
+                position: {
+                    left: imageElement.style.left,
+                    top: imageElement.style.top,
+                    width: imageElement.style.width,
+                    height: imageElement.style.height || 'auto'
+                },
+                src: imageElement.querySelector('img').src
+            };
+            
+            imageHistory.push(imageState);
+            
+            // Limit history size
+            if (imageHistory.length > 50) {
+                imageHistory.shift();
+            }
+        }
+        
+        // Undo last image action
+        function undoImageAction() {
+            if (imageHistory.length === 0) {
+                showError('No image actions to undo');
+                return;
+            }
+            
+            const lastAction = imageHistory.pop();
+            
+            if (lastAction.action === 'delete') {
+                // If the last action was a delete, recreate the image
+                if (pageNum !== lastAction.pageNum) {
+                    // Navigate to the correct page
+                    pageNum = lastAction.pageNum;
+                    renderPage(pageNum);
+                    
+                    // Add a small delay to ensure page is rendered
+                    setTimeout(() => {
+                        restoreDeletedImage(lastAction);
+                    }, 300);
+                } else {
+                    restoreDeletedImage(lastAction);
+                }
+            } else if (lastAction.action === 'add') {
+                // If the last action was an add, remove the most recently added image
+                if (pageNum !== lastAction.pageNum) {
+                    // Navigate to the correct page
+                    pageNum = lastAction.pageNum;
+                    renderPage(pageNum);
+                    
+                    // Add a small delay to ensure page is rendered
+                    setTimeout(() => {
+                        removeLastAddedImage(lastAction.pageNum);
+                    }, 300);
+                } else {
+                    removeLastAddedImage(lastAction.pageNum);
+                }
+            } else if (lastAction.action === 'resize' || lastAction.action === 'move') {
+                // If the last action was a resize or move, restore previous position/size
+                if (pageNum !== lastAction.pageNum) {
+                    // Navigate to the correct page
+                    pageNum = lastAction.pageNum;
+                    renderPage(pageNum);
+                    
+                    // Add a small delay to ensure page is rendered
+                    setTimeout(() => {
+                        restorePreviousImageState(lastAction);
+                    }, 300);
+                } else {
+                    restorePreviousImageState(lastAction);
+                }
+            }
+            
+            showSuccess('Image action undone');
+        }
+        
+        // Helper function to restore a deleted image
+        function restoreDeletedImage(imageState) {
+            const pageDiv = document.getElementById(`page-${imageState.pageNum}`);
+            if (!pageDiv) {
+                showError('Page container not found');
+                return;
+            }
+            
+            // Create a new image container
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'draggable-image';
+            imgContainer.style.left = imageState.position.left;
+            imgContainer.style.top = imageState.position.top;
+            imgContainer.style.width = imageState.position.width;
+            imgContainer.style.height = imageState.position.height;
+            
+            // Create the image element
+            const img = new Image();
+            img.src = imageState.src;
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            img.style.display = 'block';
+            
+            // Create element controls
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'element-controls';
+            
+            // Add delete button to controls
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'element-control-btn';
+            deleteBtn.innerHTML = '❌';
+            deleteBtn.title = 'Delete Image';
+            
+            // Use a properly scoped event handler for delete
+            deleteBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                saveImageToHistory('delete', imgContainer);
+                
+                // Remove from DOM
+                imgContainer.remove();
+                
+                // Remove from imageElements storage
+                if (imageElements[imageState.pageNum]) {
+                    imageElements[imageState.pageNum] = imageElements[imageState.pageNum].filter(img => 
+                        img !== imgContainer && 
+                        img.querySelector('img').src !== imgContainer.querySelector('img').src
+                    );
+                }
+                
+                showSuccess('Image removed');
+            });
+            
+            // Add controls to container
+            controlsDiv.appendChild(deleteBtn);
+            
+            // Add dedicated drag handle
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'image-drag-handle';
+            dragHandle.innerHTML = '⇄';
+            dragHandle.title = 'Drag to move image';
+            
+            // Add image, controls and drag handle to container
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(controlsDiv);
+            imgContainer.appendChild(dragHandle);
+            
+            // Add resize handles
+            const positions = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'];
+            positions.forEach(pos => {
+                const handle = document.createElement('div');
+                handle.className = `image-resize-handle resize-handle-${pos}`;
+                imgContainer.appendChild(handle);
+            });
+            
+            // Add to page
+            pageDiv.appendChild(imgContainer);
+            
+            // Make image draggable
+            makeElementDraggable(imgContainer, pageDiv);
+            
+            // Make image resizable
+            makeImageResizableImproved(imgContainer);
+            
+            // Store the image element reference
+            if (!imageElements[imageState.pageNum]) {
+                imageElements[imageState.pageNum] = [];
+            }
+            imageElements[imageState.pageNum].push(imgContainer.cloneNode(true));
+        }
+        
+        // Helper function to remove the last added image
+        function removeLastAddedImage(pageNum) {
+            if (!imageElements[pageNum] || !imageElements[pageNum].length) {
+                showError('No images to remove');
+                return;
+            }
+            
+            const lastImage = imageElements[pageNum].pop();
+            if (lastImage && lastImage.parentNode) {
+                lastImage.remove();
+            }
+        }
+        
+        // Helper function to restore previous image position/size
+        function restorePreviousImageState(imageState) {
+            const pageDiv = document.getElementById(`page-${imageState.pageNum}`);
+            if (!pageDiv) {
+                showError('Page container not found');
+                return;
+            }
+            
+            // Find the image with the same source
+            const images = pageDiv.querySelectorAll('.draggable-image');
+            for (let i = 0; i < images.length; i++) {
+                const imgSrc = images[i].querySelector('img').src;
+                if (imgSrc === imageState.src) {
+                    // Restore position and size
+                    images[i].style.left = imageState.position.left;
+                    images[i].style.top = imageState.position.top;
+                    images[i].style.width = imageState.position.width;
+                    images[i].style.height = imageState.position.height;
+                    break;
+                }
+            }
+        }
+        
+        // Improved function to make images resizable
+        function makeImageResizableImproved(imgContainer) {
+            let isResizing = false;
+            let currentHandle = null;
+            let startWidth, startHeight, startX, startY;
+            let startLeft, startTop;
+            let originalState = null;
+            let aspectRatio = 0;
+            
+            // Add event listeners for resize handles
+            const handles = imgContainer.querySelectorAll('.image-resize-handle');
+            handles.forEach(handle => {
+                handle.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    isResizing = true;
+                    
+                    // Determine which handle is being used
+                    if (this.className.includes('se')) currentHandle = 'se';
+                    else if (this.className.includes('sw')) currentHandle = 'sw';
+                    else if (this.className.includes('ne')) currentHandle = 'ne';
+                    else if (this.className.includes('nw')) currentHandle = 'nw';
+                    else if (this.className.includes('n')) currentHandle = 'n';
+                    else if (this.className.includes('e')) currentHandle = 'e';
+                    else if (this.className.includes('s')) currentHandle = 's';
+                    else if (this.className.includes('w')) currentHandle = 'w';
+                    
+                    // Get starting dimensions
+                    startWidth = imgContainer.offsetWidth;
+                    startHeight = imgContainer.offsetHeight;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startLeft = parseFloat(imgContainer.style.left) || 0;
+                    startTop = parseFloat(imgContainer.style.top) || 0;
+                    
+                    // Calculate aspect ratio
+                    const img = imgContainer.querySelector('img');
+                    if (img && img.naturalWidth && img.naturalHeight) {
+                        aspectRatio = img.naturalWidth / img.naturalHeight;
+                    } else {
+                        aspectRatio = startWidth / startHeight;
+                    }
+                    
+                    // Store original state for history
+                    originalState = {
+                        left: imgContainer.style.left,
+                        top: imgContainer.style.top,
+                        width: imgContainer.style.width,
+                        height: imgContainer.style.height || 'auto'
+                    };
+                    
+                    // Add resize class
+                    document.body.style.cursor = window.getComputedStyle(this).cursor;
+                    imgContainer.classList.add('resizing');
+                });
+            });
+            
+            // Handle resize move events
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+                
+                e.preventDefault(); // Prevent text selection during resize
+                
+                // Calculate new dimensions
+                let newWidth, newHeight, newLeft = startLeft, newTop = startTop;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                
+                // Calculate new dimensions and position based on the handle used
+                switch(currentHandle) {
+                    // Corner handles - maintain aspect ratio
+                    case 'se':
+                        newWidth = Math.max(20, startWidth + dx);
+                        newHeight = newWidth / aspectRatio;
+                        break;
+                    case 'sw':
+                        newWidth = Math.max(20, startWidth - dx);
+                        newLeft = startLeft + (startWidth - newWidth);
+                        newHeight = newWidth / aspectRatio;
+                        break;
+                    case 'ne':
+                        newWidth = Math.max(20, startWidth + dx);
+                        newHeight = newWidth / aspectRatio;
+                        newTop = startTop + startHeight - newHeight;
+                        break;
+                    case 'nw':
+                        newWidth = Math.max(20, startWidth - dx);
+                        newLeft = startLeft + (startWidth - newWidth);
+                        newHeight = newWidth / aspectRatio;
+                        newTop = startTop + startHeight - newHeight;
+                        break;
+                    
+                    // Side handles - proportional resizing
+                    case 'n':
+                        newHeight = Math.max(20, startHeight - dy);
+                        newWidth = aspectRatio * newHeight;
+                        newTop = startTop + dy;
+                        break;
+                    case 's':
+                        newHeight = Math.max(20, startHeight + dy);
+                        newWidth = aspectRatio * newHeight;
+                        break;
+                    case 'e':
+                        newWidth = Math.max(20, startWidth + dx);
+                        newHeight = newWidth / aspectRatio;
+                        break;
+                    case 'w':
+                        newWidth = Math.max(20, startWidth - dx);
+                        newHeight = newWidth / aspectRatio;
+                        newLeft = startLeft + (startWidth - newWidth);
+                        break;
+                }
+                
+                // Apply new dimensions and position without boundary restrictions
+                imgContainer.style.width = newWidth + 'px';
+                imgContainer.style.left = newLeft + 'px';
+                imgContainer.style.top = newTop + 'px';
+                imgContainer.style.height = newHeight + 'px';
+            });
+            
+            // Handle resize end
+            document.addEventListener('mouseup', function() {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.cursor = 'default';
+                    imgContainer.classList.remove('resizing');
+                    
+                    // Save resize action to history if there was a change
+                    if (originalState && (
+                        originalState.left !== imgContainer.style.left ||
+                        originalState.top !== imgContainer.style.top ||
+                        originalState.width !== imgContainer.style.width ||
+                        originalState.height !== imgContainer.style.height
+                    )) {
+                        saveImageToHistory('resize', imgContainer);
+                    }
+                    
+                    originalState = null;
+                }
+            });
+        }
+        
+        // Update Make an element draggable function to track history and remove boundaries
+        function makeElementDraggable(element, container) {
+            let isDragging = false;
+            let offsetX, offsetY;
+            let originalPosition = null;
+            
+            // Check if this is an image or text element
+            const isImage = element.classList.contains('draggable-image');
+            const isText = element.classList.contains('handwritten-text');
+            
+            // Get the drag handle if it's an image
+            const dragHandle = isImage ? element.querySelector('.image-drag-handle') : null;
+            
+            // Function to handle drag start
+            const handleDragStart = function(e) {
+                // Ignore if clicking resize handle or control buttons
+                if (e.target.classList.contains('image-resize-handle') || 
+                    e.target.classList.contains('element-control-btn')) {
+                    return;
+                }
+                
+                isDragging = true;
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+                element.style.zIndex = '1000';
+                
+                if (isImage) {
+                    element.classList.add('dragging'); // Add visual feedback for images
+                }
+                
+                // Store original position for history
+                originalPosition = {
+                    left: element.style.left,
+                    top: element.style.top
+                };
+                
+                e.preventDefault(); // Prevent text selection
+            };
+            
+            // Add event listeners to both element and the drag handle
+            if (isImage) {
+                // For images, only the image itself and drag handle should initiate dragging
+                element.addEventListener('mousedown', function(e) {
+                    if (e.target === element || e.target === element.querySelector('img')) {
+                        handleDragStart(e);
+                    }
+                });
+                
+                // The dedicated drag handle should always trigger dragging
+                if (dragHandle) {
+                    dragHandle.addEventListener('mousedown', handleDragStart);
+                }
+            } else if (isText) {
+                // For text elements, entire element is draggable but avoid drag on child elements
+                element.addEventListener('mousedown', function(e) {
+                    // Check if we're not clicking on a control button
+                    if (!e.target.classList.contains('element-control-btn')) {
+                        handleDragStart(e);
+                    }
+                });
+            }
+            
+            // Handle movement
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault(); // Prevent text selection during drag
+                
+                const containerRect = container.getBoundingClientRect();
+                let x = e.clientX - offsetX - containerRect.left;
+                let y = e.clientY - offsetY - containerRect.top;
+                
+                // No boundary checks - allow unlimited positioning
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            });
+            
+            // Handle drag end
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    element.style.zIndex = '';
+                    
+                    if (isImage) {
+                        element.classList.remove('dragging'); // Remove visual feedback for images
+                    }
+                    
+                    // Save move action to history if position changed
+                    if (originalPosition && (
+                        originalPosition.left !== element.style.left || 
+                        originalPosition.top !== element.style.top)) {
+                        
+                        if (isImage) {
+                            saveImageToHistory('move', element);
+                        } else if (isText) {
+                            // If we ever implement text history, we would save text movement here
+                        }
+                    }
+                    
+                    originalPosition = null;
+                }
+            });
+        }
+        
+        // Initialize color palette
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('.color-option').forEach(o => {
+                    o.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Update the color input
+                const color = this.getAttribute('data-color');
+                document.getElementById('text-color').value = color;
+                
+                // Check if there's selected text in the editor
+                const selection = window.getSelection();
+                const editorInput = document.getElementById('editor-input');
+                
+                if (selection.rangeCount > 0 && 
+                    editorInput.contains(selection.anchorNode) && 
+                    selection.toString().trim() !== '') {
+                    
+                    // Apply color to selected text only
+                    document.execCommand('foreColor', false, color);
+                    
+                    // Focus back on editor
+                    editorInput.focus();
+                    
+                    // Update the handwriting on the page
+                    updateHandwritingOnPage();
+                    
+                    // Save state to history
+                    textHistory.push(currentText);
+                    currentText = editorInput.innerHTML;
+                } else {
+                    // If no text selected, just update the default color
+                    updateHandwritingPreview();
+                }
+            });
+        });
+        
+        // Initialize advanced options toggle
+        document.querySelector('.advanced-toggle').addEventListener('click', function() {
+            console.log('Advanced toggle clicked');
+            this.classList.toggle('collapsed');
+            const advancedContent = document.querySelector('.advanced-content');
+            advancedContent.style.display = advancedContent.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Initialize tab switching
+        document.querySelectorAll('.editor-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.editor-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show the associated tab content
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                if (tabName === 'text') {
+                    document.getElementById('text-tab').classList.add('active');
+                } else if (tabName === 'draw') {
+                    document.getElementById('draw-tab').classList.add('active');
+                }
+            });
+        });
+        
+        // Safely initialize background color preview
+        const bgColorElement = document.getElementById('bg-color');
+        const bgColorPreviewElement = document.getElementById('bg-color-preview');
+        
+        if (bgColorElement && bgColorPreviewElement) {
+            // Initialize background color preview
+            bgColorElement.addEventListener('input', function() {
+                const color = this.value;
+                bgColorPreviewElement.style.backgroundColor = color;
+                
+                if (textElements[pageNum]) {
+                    textElements[pageNum].style.backgroundColor = color;
+                }
+            });
+            
+            // Initialize background color preview on load
+            bgColorPreviewElement.style.backgroundColor = bgColorElement.value;
+        }
+        
+        // Effect toggles
+        document.getElementById('paper-lines-effect').addEventListener('change', function() {
+            console.log('Paper lines effect changed:', this.checked);
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            if (!pageDiv) return;
+            
+            if (this.checked) {
+                if (!pageDiv.querySelector('.paper-lines')) {
+                    const paperLines = document.createElement('div');
+                    paperLines.className = 'paper-lines';
+                    pageDiv.appendChild(paperLines);
+                }
+                // Update label to show active state
+                document.querySelector('label[for="paper-lines-effect"]').classList.add('effect-active');
+            } else {
+                const paperLines = pageDiv.querySelector('.paper-lines');
+                if (paperLines) {
+                    paperLines.remove();
+                }
+                // Update label to show inactive state
+                document.querySelector('label[for="paper-lines-effect"]').classList.remove('effect-active');
+            }
+            
+            // Update effect indicators on all pages
+            updateEffectIndicators();
+            
+            // Save the effect state
+            localStorage.setItem('paper-lines-effect', this.checked);
+        });
+        
+        document.getElementById('scanned-effect').addEventListener('change', function() {
+            console.log('Scanned effect changed:', this.checked);
+            const currentTextElement = getCurrentTextElement();
+            if (currentTextElement) {
+                if (this.checked) {
+                    currentTextElement.classList.add('scanned-effect');
+                } else {
+                    currentTextElement.classList.remove('scanned-effect');
+                }
+            }
+            
+            // Also apply to the page for future text elements
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            if (pageDiv) {
+                if (this.checked) {
+                    pageDiv.classList.add('scanned-effect-container');
+                    // Update label to show active state
+                    document.querySelector('label[for="scanned-effect"]').classList.add('effect-active');
+                } else {
+                    pageDiv.classList.remove('scanned-effect-container');
+                    // Update label to show inactive state
+                    document.querySelector('label[for="scanned-effect"]').classList.remove('effect-active');
+                }
+            }
+            
+            // Update effect indicators on all pages
+            updateEffectIndicators();
+            
+            // Save the effect state
+            localStorage.setItem('scanned-effect', this.checked);
+        });
+        
+        document.getElementById('shadow-effect').addEventListener('change', function() {
+            console.log('Shadow effect changed:', this.checked);
+            const currentTextElement = getCurrentTextElement();
+            if (currentTextElement) {
+                if (this.checked) {
+                    currentTextElement.classList.add('shadow-effect');
+                } else {
+                    currentTextElement.classList.remove('shadow-effect');
+                }
+            }
+            
+            // Also apply to the page for future text elements
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            if (pageDiv) {
+                if (this.checked) {
+                    pageDiv.classList.add('shadow-effect-container');
+                    // Update label to show active state
+                    document.querySelector('label[for="shadow-effect"]').classList.add('effect-active');
+                } else {
+                    pageDiv.classList.remove('shadow-effect-container');
+                    // Update label to show inactive state
+                    document.querySelector('label[for="shadow-effect"]').classList.remove('effect-active');
+                }
+            }
+            
+            // Update effect indicators on all pages
+            updateEffectIndicators();
+            
+            // Save the effect state
+            localStorage.setItem('shadow-effect', this.checked);
+        });
+        
+        // Function to update effect indicators on the current page
+        function updateEffectIndicators() {
+            const pageDiv = document.getElementById(`page-${pageNum}`);
+            if (!pageDiv) return;
+            
+            // Remove existing indicator if any
+            const existingIndicator = pageDiv.querySelector('.effect-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+            
+            // Check if any effects are active
+            const isPaperLinesActive = document.getElementById('paper-lines-effect').checked;
+            const isScannedEffectActive = document.getElementById('scanned-effect').checked;
+            const isShadowEffectActive = document.getElementById('shadow-effect').checked;
+            
+            if (isPaperLinesActive || isScannedEffectActive || isShadowEffectActive) {
+                // Create indicator element
+                const indicator = document.createElement('div');
+                indicator.className = 'effect-indicator';
+                
+                // Add active effects to indicator
+                if (isPaperLinesActive) {
+                    const effectSpan = document.createElement('span');
+                    effectSpan.textContent = 'Lines';
+                    indicator.appendChild(effectSpan);
+                }
+                
+                if (isScannedEffectActive) {
+                    const effectSpan = document.createElement('span');
+                    effectSpan.textContent = 'Scan';
+                    indicator.appendChild(effectSpan);
+                }
+                
+                if (isShadowEffectActive) {
+                    const effectSpan = document.createElement('span');
+                    effectSpan.textContent = 'Shadow';
+                    indicator.appendChild(effectSpan);
+                }
+                
+                // Add indicator to page
+                pageDiv.appendChild(indicator);
+            }
+        }
+        
+        // Load saved effect states on page load
+        function loadEffectStates() {
+            const paperLinesEffect = localStorage.getItem('paper-lines-effect');
+            const scannedEffect = localStorage.getItem('scanned-effect');
+            const shadowEffect = localStorage.getItem('shadow-effect');
+            
+            // Set checkbox states based on localStorage values
+            if (paperLinesEffect !== null) {
+                document.getElementById('paper-lines-effect').checked = paperLinesEffect === 'true';
+                // Update label to show active state
+                if (paperLinesEffect === 'true') {
+                    document.querySelector('label[for="paper-lines-effect"]').classList.add('effect-active');
+                }
+            }
+            
+            if (scannedEffect !== null) {
+                document.getElementById('scanned-effect').checked = scannedEffect === 'true';
+                // Update label to show active state
+                if (scannedEffect === 'true') {
+                    document.querySelector('label[for="scanned-effect"]').classList.add('effect-active');
+                }
+            }
+            
+            if (shadowEffect !== null) {
+                document.getElementById('shadow-effect').checked = shadowEffect === 'true';
+                // Update label to show active state
+                if (shadowEffect === 'true') {
+                    document.querySelector('label[for="shadow-effect"]').classList.add('effect-active');
+                }
+            }
+            
+            // Apply to existing page if already rendered
+            const currentPageDiv = document.getElementById(`page-${pageNum}`);
+            if (currentPageDiv) {
+                // Apply paper lines
+                if (document.getElementById('paper-lines-effect').checked) {
+                    if (!currentPageDiv.querySelector('.paper-lines')) {
+                        const paperLines = document.createElement('div');
+                        paperLines.className = 'paper-lines';
+                        currentPageDiv.appendChild(paperLines);
+                    }
+                } else {
+                    const paperLines = currentPageDiv.querySelector('.paper-lines');
+                    if (paperLines) {
+                        paperLines.remove();
+                    }
+                }
+                
+                // Apply scanned effect
+                if (document.getElementById('scanned-effect').checked) {
+                    currentPageDiv.classList.add('scanned-effect-container');
+                } else {
+                    currentPageDiv.classList.remove('scanned-effect-container');
+                }
+                
+                // Apply shadow effect
+                if (document.getElementById('shadow-effect').checked) {
+                    currentPageDiv.classList.add('shadow-effect-container');
+                } else {
+                    currentPageDiv.classList.remove('shadow-effect-container');
+                }
+                
+                // Apply to existing text elements
+                const textElement = getCurrentTextElement();
+                if (textElement) {
+                    applyHandwritingStyles(textElement);
+                }
+                
+                // Update effect indicators
+                updateEffectIndicators();
+            }
+            
+            // Make sure advanced content visibility matches the toggle state
+            const advancedToggle = document.querySelector('.advanced-toggle');
+            const advancedContent = document.querySelector('.advanced-content');
+            
+            if (advancedToggle && advancedContent) {
+                // If any effect is enabled, expand the advanced options by default
+                if (document.getElementById('paper-lines-effect').checked || 
+                    document.getElementById('scanned-effect').checked || 
+                    document.getElementById('shadow-effect').checked) {
+                    advancedToggle.classList.remove('collapsed');
+                    advancedContent.style.display = 'block';
+                }
+            }
+        }
+        
+        // Call at initialization
+        document.addEventListener('DOMContentLoaded', loadEffectStates);
+        
+        // Download final PDF
+        function downloadPDF() {
+            if (!pdfDoc) {
+                showError('Please upload a PDF first');
+                return;
+            }
+            
+            toggleLoader(true);
+            updatePdfStatus('Generating final PDF...');
+            
+            // Save current page's content first
+            saveCurrentTextElement();
+            saveCurrentImages();
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt'
+            });
+            
+            // Save current page number to restore later
+            let currentPageNum = pageNum;
+            let processedPages = 0;
+            
+            // Process pages one by one
+            function processNextPage(index) {
+                if (index > pageCount) {
+                    // All pages processed
+                    pdf.save('completed-assignment.pdf');
+                    
+                    // Go back to the page we were on
+                    pageNum = currentPageNum;
+                    renderPage(currentPageNum); 
+                    
+                    toggleLoader(false);
+                    showSuccess('PDF downloaded successfully!');
+                    return;
+                }
+                
+                updatePdfStatus(`Processing page ${index} of ${pageCount}...`);
+                
+                // Render the page if it's not the current one
+                if (index !== pageNum) {
+                    pageNum = index;
+                    renderPage(index);
+                    
+                    // Wait for rendering to complete
+                    setTimeout(() => {
+                        captureAndAddPage(index);
+                    }, 1000); // Increased wait time to ensure content is fully rendered
+                } else {
+                    captureAndAddPage(index);
+                }
+                
+                function captureAndAddPage(idx) {
+                    const pageDiv = document.getElementById(`page-${idx}`);
+                    if (!pageDiv) {
+                        showError(`Page ${idx} container not found`);
+                        toggleLoader(false);
+                        return;
+                    }
+                    
+                    // Make sure any images and text are visible
+                    const images = pageDiv.querySelectorAll('.draggable-image');
+                    images.forEach(img => {
+                        img.style.opacity = '1';
+                        // Hide controls and handles during capture
+                        const controls = img.querySelector('.element-controls');
+                        const dragHandle = img.querySelector('.image-drag-handle');
+                        const resizeHandles = img.querySelectorAll('.image-resize-handle');
+                        
+                        if (controls) controls.style.display = 'none';
+                        if (dragHandle) dragHandle.style.display = 'none';
+                        resizeHandles.forEach(handle => {
+                            handle.style.display = 'none';
+                        });
+                    });
+                    
+                    // Hide controls on text elements too
+                    const textElements = pageDiv.querySelectorAll('.handwritten-text');
+                    textElements.forEach(textElem => {
+                        const controls = textElem.querySelector('.element-controls');
+                        if (controls) controls.style.display = 'none';
+                    });
+                    
+                    html2canvas(pageDiv, {
+                        scale: 2, // Higher scale for better quality
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        logging: false, // Disable logging
+                        onclone: function(clonedDoc) {
+                            // Additional processing on cloned document if needed
+                            const clonedPage = clonedDoc.getElementById(`page-${idx}`);
+                            if (clonedPage) {
+                                // Any additional modifications to the cloned page before capture
+                            }
+                        }
+                    }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png', 1.0);
+                        
+                        // Add new page for all pages except the first
+                        if (processedPages > 0) {
+                            pdf.addPage();
+                        }
+                        processedPages++;
+                        
+                        // Get PDF page dimensions
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        
+                        // Calculate scale to fit while maintaining aspect ratio
+                        const imgWidth = canvas.width;
+                        const imgHeight = canvas.height;
+                        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+                        
+                        // Center the image on page
+                        const imgX = (pageWidth - imgWidth * ratio) / 2;
+                        const imgY = 0;
+                        
+                        // Add the image to PDF
+                        pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                        
+                        // Restore controls visibility
+                        images.forEach(img => {
+                            const controls = img.querySelector('.element-controls');
+                            const dragHandle = img.querySelector('.image-drag-handle');
+                            const resizeHandles = img.querySelectorAll('.image-resize-handle');
+                            
+                            if (controls) controls.style.display = '';
+                            if (dragHandle) dragHandle.style.display = '';
+                            resizeHandles.forEach(handle => {
+                                handle.style.display = '';
+                            });
+                        });
+                        
+                        textElements.forEach(textElem => {
+                            const controls = textElem.querySelector('.element-controls');
+                            if (controls) controls.style.display = '';
+                        });
+                        
+                        // Process next page
+                        processNextPage(idx + 1);
+                    }).catch(error => {
+                        showError('Error capturing page: ' + error.message);
+                        console.error('HTML2Canvas error:', error);
+                        toggleLoader(false);
+                        
+                        // Try to continue with next page
+                        processNextPage(idx + 1);
+                    });
+                }
+            }
+            
+            // Start processing from page 1
+            processNextPage(1);
+        }
+        
+        // Initialize custom color picker
+        const textColorElement = document.getElementById('text-color');
+        if (textColorElement) {
+            textColorElement.addEventListener('input', function() {
+                // Remove selected class from all color options
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                const color = this.value;
+                
+                // Check if there's selected text in the editor
+                const selection = window.getSelection();
+                const editorInput = document.getElementById('editor-input');
+                
+                if (selection.rangeCount > 0 && 
+                    editorInput.contains(selection.anchorNode) && 
+                    selection.toString().trim() !== '') {
+                    
+                    // Apply color to selected text only
+                    document.execCommand('foreColor', false, color);
+                    
+                    // Focus back on editor
+                    editorInput.focus();
+                    
+                    // Update the handwriting on the page
+                    updateHandwritingOnPage();
+                    
+                    // Save state to history
+                    textHistory.push(currentText);
+                    currentText = editorInput.innerHTML;
+                } else {
+                    // If no text selected, just update the default color
+                    updateHandwritingPreview();
+                }
+            });
+        }
+        
+        // Initialize undo image button
+        document.getElementById('undo-image').addEventListener('click', undoImageAction);
+        
+        // Toggle compression options
+        function toggleCompressionOptions() {
+            const compressionOptions = document.getElementById('compression-options');
+            compressionOptions.classList.toggle('visible');
+            
+            // Estimate file size when opening
+            if (compressionOptions.classList.contains('visible')) {
+                estimateFileSize();
+            }
+        }
+        
+        // Estimate file size based on compression quality
+        function estimateFileSize() {
+            if (!pdfDoc) {
+                document.getElementById('estimated-size').textContent = 'Upload PDF first';
+                return;
+            }
+            
+            const quality = parseInt(document.getElementById('compression-quality').value) / 100;
+            const pageCount = pdfDoc.numPages;
+            
+            // Rough estimation based on page count and quality
+            let estimatedSizeInMB;
+            if (quality > 0.9) {
+                estimatedSizeInMB = pageCount * 0.5; // High quality
+            } else if (quality > 0.7) {
+                estimatedSizeInMB = pageCount * 0.3; // Medium quality
+            } else if (quality > 0.4) {
+                estimatedSizeInMB = pageCount * 0.15; // Low quality
+            } else {
+                estimatedSizeInMB = pageCount * 0.08; // Very low quality
+            }
+            
+            document.getElementById('estimated-size').textContent = estimatedSizeInMB.toFixed(2) + ' MB';
+            
+            // Update indicator color based on target size
+            const sizeIndicator = document.getElementById('file-size-info');
+            if (estimatedSizeInMB < 3) {
+                sizeIndicator.style.color = 'green';
+                sizeIndicator.textContent = 'Target size: Less than 3MB ✓';
+            } else {
+                sizeIndicator.style.color = 'red';
+                sizeIndicator.textContent = 'Target size: Less than 3MB ✗ (Try lower quality)';
+            }
+        }
+        
+        // Update quality indicator and estimated size
+        document.getElementById('compression-quality').addEventListener('input', function() {
+            document.getElementById('quality-value').textContent = this.value + '%';
+            estimateFileSize();
+        });
+        
+        // Download compressed PDF
+        function downloadCompressedPDF() {
+            if (!pdfDoc) {
+                showError('Please upload a PDF first');
+                return;
+            }
+            
+            toggleLoader(true);
+            updatePdfStatus('Generating compressed PDF...');
+            
+            // Save current page's content first
+            saveCurrentTextElement();
+            saveCurrentImages();
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'pt'
+            });
+            
+            // Get compression quality
+            const quality = parseInt(document.getElementById('compression-quality').value) / 100;
+            
+            // Save current page number to restore later
+            let currentPageNum = pageNum;
+            let processedPages = 0;
+            
+            // Process pages one by one
+            function processNextPage(index) {
+                if (index > pageCount) {
+                    // All pages processed
+                    pdf.save('compressed-assignment.pdf');
+                    
+                    // Go back to the page we were on
+                    pageNum = currentPageNum;
+                    renderPage(currentPageNum); 
+                    
+                    toggleLoader(false);
+                    showSuccess('Compressed PDF downloaded successfully!');
+                    return;
+                }
+                
+                updatePdfStatus(`Processing page ${index} of ${pageCount}...`);
+                
+                // Render the page if it's not the current one
+                if (index !== pageNum) {
+                    pageNum = index;
+                    renderPage(index);
+                    
+                    // Wait for rendering to complete
+                    setTimeout(() => {
+                        captureAndAddPage(index);
+                    }, 1000); // Increased wait time to ensure content is fully rendered
+                } else {
+                    captureAndAddPage(index);
+                }
+                
+                function captureAndAddPage(idx) {
+                    const pageDiv = document.getElementById(`page-${idx}`);
+                    if (!pageDiv) {
+                        showError(`Page ${idx} container not found`);
+                        toggleLoader(false);
+                        return;
+                    }
+                    
+                    // Make sure any images and text are visible
+                    const images = pageDiv.querySelectorAll('.draggable-image');
+                    images.forEach(img => {
+                        img.style.opacity = '1';
+                        // Hide controls and handles during capture
+                        const controls = img.querySelector('.element-controls');
+                        const dragHandle = img.querySelector('.image-drag-handle');
+                        const resizeHandles = img.querySelectorAll('.image-resize-handle');
+                        
+                        if (controls) controls.style.display = 'none';
+                        if (dragHandle) dragHandle.style.display = 'none';
+                        resizeHandles.forEach(handle => {
+                            handle.style.display = 'none';
+                        });
+                    });
+                    
+                    // Hide controls on text elements too
+                    const textElements = pageDiv.querySelectorAll('.handwritten-text');
+                    textElements.forEach(textElem => {
+                        const controls = textElem.querySelector('.element-controls');
+                        if (controls) controls.style.display = 'none';
+                    });
+                    
+                    // Adjust canvas settings based on compression level
+                    const scale = quality > 0.7 ? 2 : (quality > 0.4 ? 1.5 : 1);
+                    
+                    html2canvas(pageDiv, {
+                        scale: scale, // Adjust scale based on compression level
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        onclone: function(clonedDoc) {
+                            // Additional processing on cloned document if needed
+                            const clonedPage = clonedDoc.getElementById(`page-${idx}`);
+                            if (clonedPage) {
+                                // Any additional modifications to the cloned page before capture
+                            }
+                        }
+                    }).then(canvas => {
+                        // Compress image with specified quality
+                        const imgData = canvas.toDataURL('image/jpeg', quality);
+                        
+                        // Add new page for all pages except the first
+                        if (processedPages > 0) {
+                            pdf.addPage();
+                        }
+                        processedPages++;
+                        
+                        // Get PDF page dimensions
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        
+                        // Calculate scale to fit while maintaining aspect ratio
+                        const imgWidth = canvas.width;
+                        const imgHeight = canvas.height;
+                        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+                        
+                        // Center the image on page
+                        const imgX = (pageWidth - imgWidth * ratio) / 2;
+                        const imgY = 0;
+                        
+                        // Add the image to PDF with compression
+                        pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                        
+                        // Restore controls visibility
+                        images.forEach(img => {
+                            const controls = img.querySelector('.element-controls');
+                            const dragHandle = img.querySelector('.image-drag-handle');
+                            const resizeHandles = img.querySelectorAll('.image-resize-handle');
+                            
+                            if (controls) controls.style.display = '';
+                            if (dragHandle) dragHandle.style.display = '';
+                            resizeHandles.forEach(handle => {
+                                handle.style.display = '';
+                            });
+                        });
+                        
+                        textElements.forEach(textElem => {
+                            const controls = textElem.querySelector('.element-controls');
+                            if (controls) controls.style.display = '';
+                        });
+                        
+                        // Process next page
+                        processNextPage(idx + 1);
+                    }).catch(error => {
+                        showError('Error capturing page: ' + error.message);
+                        console.error('HTML2Canvas error:', error);
+                        toggleLoader(false);
+                        
+                        // Try to continue with next page
+                        processNextPage(idx + 1);
+                    });
+                }
+            }
+            
+            // Start processing from page 1
+            processNextPage(1);
+        }
+    </script>
+</body>
+</html> 
